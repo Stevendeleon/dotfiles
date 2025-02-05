@@ -1,0 +1,86 @@
+let mapleader = " "
+let g:one_allow_italics = 1 " I love italic for comments
+let g:airline_powerline_fonts = 1
+let g:airline_symbols_ascii = 1
+
+let g:polyglot_disabled = ['sensible']
+
+" Enable Git branch display
+let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#fugitiveline#enabled = 1
+let g:airline_section_b = '%{airline#extensions#branch#get_head()}'
+let g:airline#extensions#branch#format = 0
+let g:aitline_theme = 'apprentice'
+
+syntax on
+filetype plugin indent on
+
+set background=dark
+set nowrap
+set termguicolors
+set relativenumber
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set nocompatible
+
+nnoremap <C-e> :Rex<CR>
+nnoremap <C-r> :Explore<CR>
+nnoremap <silent> <C-h> :TmuxNavigateLeft<CR>
+nnoremap <silent> <C-j> :TmuxNavigateDown<CR>
+nnoremap <silent> <C-k> :TmuxNavigateUp<CR>
+nnoremap <silent> <C-l> :TmuxNavigateRight<CR>
+"nnoremap <Leader>e :NERDTreeToggle<CR>
+
+au BufRead,BufNewFile *.gohtml set filetype=html
+
+call plug#begin()
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+Plug 'tpope/vim-fugitive'
+Plug 'romainl/apprentice'
+
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'christoomey/vim-tmux-navigator'
+
+call plug#end()
+
+colorscheme apprentice
+
+" Use <Tab> and <S-Tab> to navigate completion list
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+" Use <CR> to confirm completion
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" Use `[g` and `]g` to navigate diagnostics
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window
+nnoremap <silent> K :call ShowDocumentation()<CR>
+
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+" Enable Go formatting and organize imports on save
+autocmd BufWritePre *.go :call CocAction('format')
+nmap <leader>i :call CocAction('runCommand', 'editor.action.organizeImport')<CR>
+" Formatting selected code
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
